@@ -85,24 +85,28 @@ const galleryItemsArr = galleryItems.map(item => {
   return galleryItem;
 })
 
-function seeFullImage(event) {
-  event.preventDefault();
-  lightBoxRef.classList.add('is-open');
-  lightboxImgRef.src = event.target.dataset.source;
-  lightboxImgRef.alt = event.target.alt;
+function closeLightboxByEsc(event){
+  if (event.code !== 'Escape') return;
+  closeLightbox();
 }
 
 function closeLightbox() {
   lightBoxRef.classList.remove('is-open');
   lightboxImgRef.src = ('');
   lightboxImgRef.alt = ('');
+  window.removeEventListener('keydown', closeLightboxByEsc);
 }
 
+function seeFullImage(event) {
+  event.preventDefault();
+  if (event.target.matches('img')) {
+    lightBoxRef.classList.add('is-open');
+    lightboxImgRef.src = event.target.dataset.source;
+    lightboxImgRef.alt = event.target.alt;
+    window.addEventListener('keydown', closeLightboxByEsc);
+  }
+}
 
 galleryRef.append(...galleryItemsArr);
 galleryRef.addEventListener('click', seeFullImage);
 lightBoxRef.addEventListener('click', closeLightbox);
-window.addEventListener('keydown', e => {
-  if (e.code !== 'Escape') return;
-  closeLightbox();
-})
